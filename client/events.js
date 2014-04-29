@@ -1,10 +1,10 @@
 Template.S3.events({
   'change input[type=file]': function (e,helper) {
     var context = this || {};
-
     if(helper.data && _.has(helper.data,"callback")){
       var callback = helper.data.callback;
       var id = helper.data.id;
+      var pid = e.target.dataset.postingId;
     } else {
       console.log("S3 Error: Helper Block needs a callback function to run");
       return
@@ -21,7 +21,7 @@ Template.S3.events({
 
       reader.onload = function () {
         fileData.data = new Uint8Array(reader.result);
-        Meteor.call("S3upload",fileData,context,callback,id,function (error, result) { setImage(result);});
+        Meteor.call("S3upload",fileData,context,callback,id,pid,function (error, result) { setImage(result);});
       };
 
       reader.readAsArrayBuffer(file);

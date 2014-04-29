@@ -9,7 +9,7 @@ Meteor.methods({
 		knox = Knox.createClient(obj);
 		S3 = {directory:obj.directory || "/"};
 	},
-	S3upload:function(file,context,callback,id){
+	S3upload:function(file,context,callback,id,pid){
 		var future = new Future();
 
 		var extension = (file.name).match(/\.[0-9a-z]{1,5}$/i);
@@ -29,7 +29,7 @@ Meteor.methods({
 		if(future.wait() && callback){
 			var url = knox.http(future.wait());
 			Meteor.call(callback,url,context);
-			return [id, url];
+			return [id, url, pid];
 		}
 	},
 	S3delete:function(path, callback){
