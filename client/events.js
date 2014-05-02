@@ -5,6 +5,13 @@ Template.S3.events({
       var callback = helper.data.callback;
       var id = helper.data.id;
       var pid = e.target.dataset.postingId;
+      var dzid = e.target.dataset.dzid;
+      if(dzid){
+        loadingSession = getLoading();
+        loadingSession[dzid] = true;
+        setLoading(loadingSession);
+      }
+
     } else {
       console.log("S3 Error: Helper Block needs a callback function to run");
       return
@@ -21,7 +28,13 @@ Template.S3.events({
 
       reader.onload = function () {
         fileData.data = new Uint8Array(reader.result);
-        Meteor.call("S3upload",fileData,context,callback,id,pid,function (error, result) { setImage(result); } );
+        Meteor.call("S3upload",fileData,context,callback,id,pid,function (error, result) { 
+            console.log(dzid);
+            loadingSession = getLoading();
+            loadingSession[dzid] = false;
+            setLoading(loadingSession);
+            setImage(result); 
+          } );
       };
 
       reader.readAsArrayBuffer(file);
